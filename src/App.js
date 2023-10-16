@@ -8,16 +8,16 @@ function App() {
   const [colors, setColors] = useState([]);
 
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, "colors"), (snapshot) => {
-      const colors = snapshot.docs.map((doc) => ({
-        id: doc.id,
+    const collectionRef = collection(db, "colors");
+    const q = query(collectionRef, orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const result = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
+        id: doc.id,
       }));
-      setColors(colors);
+      setColors(result);
     });
-    return () => {
-      unsub();
-    };
+    return unsubscribe;
   }, []);
 
   
